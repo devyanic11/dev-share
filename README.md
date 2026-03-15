@@ -1,11 +1,9 @@
-# 🌐 DevProfile — 2090 HUD Edition
+# DevShare — 2090 HUD Edition
 
 A futuristic, high-density developer analytics dashboard that aggregates your engineering footprint from across the web into a single, visually striking "HUD" (Heads-Up Display).
 
-![Cyberpunk Dashboard UI](https://github.com/user-attachments/assets/your-screenshot-here) <!-- Replace with actual screenshot link when hosted -->
+[Try here: https://dev-share-it.vercel.app/](https://dev-share-it.vercel.app/)
 
-## 🚀 Vision
-Built for the developers of 2090. No whitespace. No "fluff". Just pure data, scanned and ready for recruiter extraction. This project focuses on high-density data visualization and a "Cyber-Physical" aesthetic inspired by Apple's minimalism and Terminal hacker vibes.
 
 ## 🛠️ Tech Stack
 - **Framework:** [Next.js 15+](https://nextjs.org/) (App Router)
@@ -13,32 +11,6 @@ Built for the developers of 2090. No whitespace. No "fluff". Just pure data, sca
 - **Data Fetching:** [Cheerio](https://cheerio.js.org/) (Web Scraping) & Platform APIs
 - **Visuals:** [Chart.js](https://www.chartjs.org/) (Radar Charts), [React Activity Calendar](https://github.com/grubersjoe/react-activity-calendar) (Heatmaps)
 - **Icons:** [Heroicons](https://heroicons.com/) & Custom SVGs
-
-## 🏗️ Architecture
-
-```mermaid
-graph TD
-    User((User)) -->|Input Usernames| Form[Landing Page Form]
-    Form -->|Dynamic Route| Profile[Profile Page /profile]
-    
-    subgraph "Data Engine"
-        Profile -->|Server Fetch| Scraper[Scraper Logic /lib/platforms]
-        Scraper -->|GitHub API| GH[GitHub Connector]
-        Scraper -->|Cheerio Scraping| Web[Web Scrapers: LC, CF, Kaggle, LI, X]
-    end
-    
-    subgraph "HUD Components"
-        GH -->|JSON| GHC[GitHub HUD Panel]
-        Web -->|JSON| LCC[LeetCode Matrix]
-        Web -->|JSON| CFC[Codeforces Panel]
-        Web -->|JSON| INC[Influence Nodes]
-    end
-    
-    GHC --> UI[2090 Dashboard UI]
-    LCC --> UI
-    CFC --> UI
-    INC --> UI
-```
 
 ## 📂 Project Structure
 ```text
@@ -67,14 +39,8 @@ src/
    ```bash
    npm install
    ```
-
-3. **Set up Environment Variables:**
-   Create a `.env.local` file:
-   ```env
-   GITHUB_TOKEN=your_personal_access_token_here
-   ```
-
-4. **Run the development server:**
+   
+3. **Run the development server:**
    ```bash
    npm run dev
    ```
@@ -83,6 +49,3 @@ src/
 ## 🤝 Contributing
 We love modularity! Want to add a new platform (e.g., GFG, CodeChef)? 
 Check out our [Contributing Guide](CONTRIBUTING.md) to learn how to plug in a new scraper module.
-
-## 📄 License
-MIT
