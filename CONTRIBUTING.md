@@ -1,8 +1,8 @@
-# 🛠️ Contributing to DevProfile
+# Contributing to DevShare
 
 First off, thank you for considering contributing to DevProfile! It's people like you that make this dashboard the best developer analytics tool for the year 2090.
 
-## 🧱 The Architecture
+## The Architecture
 This project is designed with modularity at its core. Most features revolve around **Platform Scrapers**.
 
 ### How to add a new Platform (e.g., CodeChef, GFG)
@@ -43,20 +43,17 @@ To add a new platform, follow these steps:
 5. **Update DashboardClient:**
    Add your new component to `src/components/DashboardClient.tsx` in a relevant `col-span` grid.
 
-## 🎨 Aesthetic Guidelines
+## Aesthetic Guidelines
 - **Primary Color:** `#00ff41` (Matrix Green)
 - **Secondary Colors:** Neon Cyans, Blues, and Ambers for different platforms.
 - **Grids:** Use `hud-grid` class for consistent spacing.
 - **Micro-animations:** Use `animate-pulse` or `transition-all` for interactive elements.
 
-## 🧪 Testing
+## Testing
 Run `npm run dev` and navigate to `/profile?yourplatform=username` to verify that your new card renders correctly and fetches real data.
 
-## 📝 Pull Request Process
+## Pull Request Process
 1. Create a new branch: `feature/add-platform-name`.
 2. Ensure no lint errors: `npm run lint`.
 3. Submit the PR with a screenshot of your new HUD component!
 
----
-
-Stay Cyber. 🦾
