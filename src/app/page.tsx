@@ -46,6 +46,13 @@ const PLATFORMS = [
     icon: "🐦",
     prefix: "twitter.com/",
   },
+  {
+    id: "codeforces",
+    label: "Codeforces",
+    placeholder: "handle (e.g. devyanic11)",
+    icon: "🐦",
+    prefix: "https://codeforces.com/profile/",
+  },
 ];
 
 const TERMINAL_LINES = [
