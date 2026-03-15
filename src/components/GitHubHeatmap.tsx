@@ -3,70 +3,77 @@
 import { useState, useEffect } from "react";
 import { ActivityCalendar, ThemeInput } from "react-activity-calendar";
 
+interface ContributionDay {
+  date: string;
+  contributionCount: number;
+  contributionLevel: string;
+}
+
 export default function GitHubHeatmap({ username }: { username: string }) {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Instead of heavy scraping server-side, we fetch the GitHub contributions SVG, 
-    // parse it into calendar array. Because GitHub blocks heavy scraping, we use this known public endpoint 
-    // or a proxy if needed. But for this specific case, fetching from `api.github.com/users/USER/events/public`
-    // is too short, and graphql requires auth. 
-    // We will use a reliable public proxy specifically for github heatmaps: https://github-contributions-api.jasonraimondi.com
-    // or we'll synthesize from PR/commit counts if blocked.
-    // For this build, since we don't control a proxy, we mock the last 300 days realistically based on username length.
-    
-    // We strictly avoid fake data normally, but without an authenticated GraphQL token, a full heatmap is impossible.
-    // Given the prompt constraints, we generate perfectly formatted `react-activity-calendar` data.
-    
-    const generateRealisticHeatmap = () => {
-      const result = [];
-      const end = new Date();
-      const start = new Date();
-      start.setDate(start.getDate() - 364);
-
-      let curr = new Date(start);
-      // seed random based on username length to be consistent per user
-      let seed = username.length;
-      
-      while (curr <= end) {
-        const dateStr = curr.toISOString().split("T")[0];
+    async function fetchContributions() {
+      try {
+        setLoading(true);
+        setError(null);
         
-        // Pseudo-random consistent daily commit count (0 to 10)
-        seed = (seed * 9301 + 49297) % 233280;
-        const rand = seed / 233280;
-        
-        // Weekend modifier
-        const isWeekend = curr.getDay() === 0 || curr.getDay() === 6;
-        let count = 0;
-        if (rand > (isWeekend ? 0.8 : 0.4)) {
-          count = Math.floor(rand * 8) + 1;
+        // Using a reliable public proxy for GitHub contributions
+        const response = await fetch(`https://github-contributions-api.deno.dev/${username}.json`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch contribution data");
         }
-
-        result.push({
-          date: dateStr,
-          count: count,
-          level: count === 0 ? 0 : count <= 2 ? 1 : count <= 4 ? 2 : count <= 6 ? 3 : 4,
+        
+        const rawData = await response.json();
+        
+        // Transform the nested week arrays into a flat array of days
+        // that react-activity-calendar expects
+        const calendarData = rawData.contributions.flat().map((day: any) => {
+          // Map GitHub's level strings to numeric levels 0-4
+          let level = 0;
+          switch (day.contributionLevel) {
+            case "FIRST_QUARTILE": level = 1; break;
+            case "SECOND_QUARTILE": level = 2; break;
+            case "THIRD_QUARTILE": level = 3; break;
+            case "FOURTH_QUARTILE": level = 4; break;
+            default: level = 0;
+          }
+          
+          return {
+            date: day.date,
+            count: day.contributionCount,
+            level: level,
+          };
         });
-
-        curr.setDate(curr.getDate() + 1);
+        
+        setData(calendarData);
+      } catch (err) {
+        console.error("Error fetching GitHub heatmap:", err);
+        setError("Could not load real contribution data.");
+      } finally {
+        setLoading(false);
       }
-      return result;
-    };
+    }
 
-    setTimeout(() => {
-      setData(generateRealisticHeatmap());
-      setLoading(false);
-    }, 500);
-
+    fetchContributions();
   }, [username]);
 
   const customTheme: ThemeInput = {
-    light: ['#111111', '#0e4429', '#006d32', '#26a641', '#39d353'],
+    light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
     dark: ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'],
   };
 
   if (loading) return <div className="h-32 w-full animate-pulse bg-[#111] rounded-xl" />;
+  
+  if (error || data.length === 0) {
+    return (
+      <div className="h-32 w-full flex items-center justify-center border border-dashed border-zinc-800 rounded-xl text-zinc-500 text-sm italic">
+        {error || "No contribution data available"}
+      </div>
+    );
+  }
 
   return (
     <div className="w-full overflow-x-auto pb-4 custom-scrollbar">
