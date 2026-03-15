@@ -138,15 +138,30 @@ export interface HashnodeProfile {
   articlesLast30Days: number;
 }
 
+export interface LinkedInExperience {
+  company: string;
+  role: string;
+  duration: string;
+}
+
+export interface LinkedInPost {
+  text: string;
+  reactions: number;
+  comments: number;
+}
+
 export interface LinkedInProfile {
   username: string;
   profileUrl: string;
   name: string;
   headline: string;
   location: string;
+  currentCompany: string;
   currentRole: string;
   followers: number;
   connections: string;
+  experience: LinkedInExperience[];
+  topPosts: LinkedInPost[];
 }
 
 export interface TwitterProfile {
