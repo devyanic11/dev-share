@@ -15,7 +15,7 @@ ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip);
 
 export default function SkillRadar({ score }: { score: DevScore }) {
   const data = {
-    labels: ["ENG", "PRB", "OSS", "COM", "WRT"],
+    labels: ["Engineering", "Problem Solving", "Open Source", "Community", "Writing"],
     datasets: [
       {
         label: "Profile",
