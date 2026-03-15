@@ -55,7 +55,7 @@ export default function DashboardClient({
 
   return (
     <main className="min-h-screen bg-black text-gray-100 font-sans selection:bg-green-500/30 pb-24">
-      
+
       {/* Abstract Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-green-900/10 blur-[120px]" />
@@ -69,7 +69,7 @@ export default function DashboardClient({
             <span className="w-6 h-6 rounded border border-green-500/30 flex items-center justify-center text-green-500 text-xs font-mono">D</span>
             <span>Dev<span className="text-gray-500">Profile</span></span>
           </a>
-          
+
           {/* Section Jump Links */}
           {dashboardVisible && (
             <div className="hidden md:flex items-center gap-6 text-xs uppercase tracking-widest font-mono text-gray-500">
@@ -84,7 +84,7 @@ export default function DashboardClient({
       </nav>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        
+
         {/* Terminal Loading Overlay */}
         <div className={`transition-all duration-700 ${dashboardVisible ? 'hidden' : 'block mb-8'}`}>
           <TerminalHero
@@ -97,7 +97,7 @@ export default function DashboardClient({
         {/* Dashboard Content - Platform Wise Sections */}
         {dashboardVisible && (
           <div id="dashboard-content" className="animate-fade-in-up" style={{ animationDelay: "100ms" }}>
-            
+
             {/* SECTION: OVERVIEW */}
             <section id="overview" className="scroll-mt-24 mb-24">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
@@ -123,12 +123,6 @@ export default function DashboardClient({
                 </div>
 
                 <div className="shrink-0 flex md:flex-col items-center md:items-end gap-4">
-                  <div className="text-center md:text-right">
-                    <div className="text-5xl font-black tabular-nums tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-green-400 to-green-600 drop-shadow-sm">
-                      {score.overall}
-                    </div>
-                    <div className="text-xs uppercase tracking-widest text-gray-500 mt-1 font-semibold">Dev Score</div>
-                  </div>
                   <ShareButtons profileUrl={profileUrl} username={username} score={score.overall} />
                 </div>
               </div>
