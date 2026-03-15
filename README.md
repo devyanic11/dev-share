@@ -5,14 +5,14 @@ A futuristic, high-density developer analytics dashboard that aggregates your en
 [Try here: https://dev-share-it.vercel.app/](https://dev-share-it.vercel.app/)
 
 
-## 🛠️ Tech Stack
+## Tech Stack
 - **Framework:** [Next.js 15+](https://nextjs.org/) (App Router)
 - **Styling:** [Tailwind CSS](https://tailwindcss.com/) with custom Glassmorphism & CRT animations
 - **Data Fetching:** [Cheerio](https://cheerio.js.org/) (Web Scraping) & Platform APIs
 - **Visuals:** [Chart.js](https://www.chartjs.org/) (Radar Charts), [React Activity Calendar](https://github.com/grubersjoe/react-activity-calendar) (Heatmaps)
 - **Icons:** [Heroicons](https://heroicons.com/) & Custom SVGs
 
-## 📂 Project Structure
+## Project Structure
 ```text
 src/
 ├── app/                  # Next.js Routes & API handlers
@@ -27,7 +27,7 @@ src/
 └── globals.css           # 2090 Core Aesthetic (Scanlines, Borders)
 ```
 
-## 🛠️ Installation & Local Run
+## Installation & Local Run
 
 1. **Clone the repository:**
    ```bash
@@ -46,6 +46,6 @@ src/
    ```
    Open [http://localhost:3000](http://localhost:3000) to see the result.
 
-## 🤝 Contributing
+## Contributing
 We love modularity! Want to add a new platform (e.g., GFG, CodeChef)? 
 Check out our [Contributing Guide](CONTRIBUTING.md) to learn how to plug in a new scraper module.
