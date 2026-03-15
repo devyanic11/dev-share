@@ -9,8 +9,15 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "chart.js": "^4.5.1",
+    "cheerio": "^1.2.0",
+    "date-fns": "^4.1.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.0",
     "next": "16.1.6",
     "react": "19.2.3",
+    "react-activity-calendar": "^3.1.1",
+    "react-chartjs-2": "^5.3.1",
     "react-dom": "19.2.3"
   },
   "devDependencies": {
