@@ -27,9 +27,11 @@ export default function DashboardClient({
 }: DashboardClientProps) {
   const [dashboardVisible, setDashboardVisible] = useState(false);
 
-  const name = profile.linkedin?.name || profile.github?.name || profile.hashnode?.name || params.github || "Developer";
-  const avatarUrl = profile.github?.avatarUrl || "";
-  const bio = profile.linkedin?.headline || profile.github?.bio || profile.hashnode?.bio || "Software Engineer & Builder";
+  const name = profile.linkedin?.name || profile.github?.name || profile.leetcode?.name || profile.codeforces?.name || profile.hashnode?.name || params.github || "Developer";
+  const avatarUrl = profile.github?.avatarUrl || profile.linkedin?.avatarUrl || profile.leetcode?.avatarUrl || profile.codeforces?.avatarUrl || "";
+  const bio = profile.linkedin?.headline || profile.github?.bio || profile.leetcode?.bio || profile.codeforces?.bio || profile.hashnode?.bio || "Software Engineer & Builder";
+
+
   const username = params.github || params.leetcode || params.hashnode || "dev";
 
   const platforms = [

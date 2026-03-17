@@ -60,8 +60,12 @@ export async function fetchCodeforcesProfile(username: string): Promise<Codeforc
     return {
       username: user.handle,
       profileUrl: `https://codeforces.com/profile/${user.handle}`,
+      name: user.firstName ? `${user.firstName}${user.lastName ? " " + user.lastName : ""}` : user.handle,
+      avatarUrl: user.titlePhoto?.startsWith("http") ? user.titlePhoto : (user.titlePhoto ? `https:${user.titlePhoto}` : undefined),
+      bio: `${user.rank || "Developer"}`,
 
       rating: user.rating || 0,
+
       rank: user.rank || "Unrated",
       maxRating: user.maxRating || 0,
       maxRank: user.maxRank || "Unrated",
