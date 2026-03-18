@@ -11,15 +11,14 @@ interface SocialLinksProps {
 }
 
 const LINKS = [
-  { key: "github", label: "GitHub", icon: "⚡", makeUrl: (v: string) => v.startsWith("http") ? v : `https://github.com/${v}` },
+  { key: "github", label: "GitHub", icon: "⚡", makeUrl: (v: string) => `https://github.com/${v}` },
   { key: "linkedin", label: "LinkedIn", icon: "💼", makeUrl: (v: string) => v.startsWith("http") ? v : `https://www.linkedin.com/in/${v}` },
-  { key: "twitter", label: "Twitter", icon: "🐦", makeUrl: (v: string) => v.startsWith("http") ? v : `https://twitter.com/${v}` },
-  { key: "leetcode", label: "LeetCode", icon: "🧩", makeUrl: (v: string) => v.startsWith("http") ? v : `https://leetcode.com/u/${v}` },
+  { key: "twitter", label: "Twitter", icon: "🐦", makeUrl: (v: string) => `https://twitter.com/${v}` },
+  { key: "leetcode", label: "LeetCode", icon: "🧩", makeUrl: (v: string) => `https://leetcode.com/u/${v}` },
   { key: "hashnode", label: "Hashnode", icon: "✍️", makeUrl: (v: string) => v.startsWith("http") ? v : `https://${v}` },
-  { key: "kaggle", label: "Kaggle", icon: "📊", makeUrl: (v: string) => v.startsWith("http") ? v : `https://www.kaggle.com/${v}` },
-  { key: "codeforces", label: "Codeforces", icon: "🏆", makeUrl: (v: string) => v.startsWith("http") ? v : `https://codeforces.com/profile/${v}` },
+  { key: "kaggle", label: "Kaggle", icon: "📊", makeUrl: (v: string) => `https://www.kaggle.com/${v}` },
+  { key: "codeforces", label: "Codeforces", icon: "🏆", makeUrl: (v: string) => `https://codeforces.com/profile/${v}` },
 ];
-
 
 export default function SocialLinks(props: SocialLinksProps) {
   const activeLinks = LINKS.filter(

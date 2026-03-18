@@ -11,11 +11,7 @@ export async function fetchLeetCodeProfile(username: string): Promise<LeetCodePr
             username
             profile {
               ranking
-              realName
-              userAvatar
-              aboutMe
             }
-
             submitStatsGlobal {
               acSubmissionNum {
                 difficulty
@@ -127,12 +123,8 @@ export async function fetchLeetCodeProfile(username: string): Promise<LeetCodePr
     return {
       username: user.username,
       profileUrl: `https://leetcode.com/u/${user.username}/`,
-      name: user.profile?.realName || user.username,
-      avatarUrl: user.profile?.userAvatar,
-      bio: user.profile?.aboutMe,
       
       totalSolved,
-
       easySolved: findCount(acSubmissions, "Easy"),
       mediumSolved: findCount(acSubmissions, "Medium"),
       hardSolved: findCount(acSubmissions, "Hard"),
