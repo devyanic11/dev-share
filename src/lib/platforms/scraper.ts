@@ -169,7 +169,6 @@ async function scrapeLinkedIn(username: string): Promise<LinkedInProfile | null>
     // LinkedIn usually serves an authwall, but occasionally serves public preview with OG tags
     const title = $('meta[property="og:title"]').attr('content') || "";
     const description = $('meta[name="description"]').attr('content') || $('meta[property="og:description"]').attr('content') || "";
-    const avatarUrl = $('meta[property="og:image"]').attr('content') || "";
 
     const nameMatch = title.match(/^(.*?)\s*-/);
     const name = nameMatch ? nameMatch[1].trim() : username;
@@ -191,9 +190,7 @@ async function scrapeLinkedIn(username: string): Promise<LinkedInProfile | null>
       currentRole: currentRole.trim() || "Professional",
       followers: 0, 
       connections,
-      avatarUrl,
     };
-
   } catch (err) {
     console.error("LinkedIn scrape error:", err);
     return getDefaultLinkedIn();

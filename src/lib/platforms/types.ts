@@ -60,9 +60,6 @@ export interface GitHubProfile {
 export interface LeetCodeProfile {
   username: string;
   profileUrl: string;
-  name?: string;
-  avatarUrl?: string;
-  bio?: string;
 
   // Overall
   totalSolved: number;
@@ -91,9 +88,6 @@ export interface LeetCodeProfile {
 export interface CodeforcesProfile {
   username: string;
   profileUrl: string;
-  name?: string;
-  avatarUrl?: string;
-  bio?: string;
   
   rating: number;
   rank: string;
@@ -153,7 +147,6 @@ export interface LinkedInProfile {
   currentRole: string;
   followers: number;
   connections: string;
-  avatarUrl?: string;
 }
 
 export interface TwitterProfile {

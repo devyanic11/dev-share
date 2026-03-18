@@ -3,7 +3,6 @@ import { fetchLeetCodeProfile } from "@/lib/platforms/leetcode";
 import { fetchCodeforcesProfile } from "@/lib/platforms/codeforces";
 import { fetchHashnodeProfile } from "@/lib/platforms/hashnode";
 import { scrapeSocialProfile } from "@/lib/platforms/scraper";
-import { extractUsername } from "@/lib/platforms/utils";
 import { computeDevScore, generateInsights } from "@/lib/scoring";
 import { DevProfile } from "@/lib/platforms/types";
 import DashboardClient from "@/components/DashboardClient";
@@ -27,14 +26,14 @@ export async function generateMetadata({ searchParams }: ProfilePageProps): Prom
 export default async function ProfilePage({ searchParams }: ProfilePageProps) {
   const params = await searchParams;
 
-  const githubUser = typeof params.github === "string" ? extractUsername("github", params.github) : undefined;
-  const leetcodeUser = typeof params.leetcode === "string" ? extractUsername("leetcode", params.leetcode) : undefined;
-  const hashnodeHost = typeof params.hashnode === "string" ? extractUsername("hashnode", params.hashnode) : undefined;
-  const codeforcesUser = typeof params.codeforces === "string" ? extractUsername("codeforces", params.codeforces) : undefined;
+  const githubUser = typeof params.github === "string" ? params.github : undefined;
+  const leetcodeUser = typeof params.leetcode === "string" ? params.leetcode : undefined;
+  const hashnodeHost = typeof params.hashnode === "string" ? params.hashnode : undefined;
+  const codeforcesUser = typeof params.codeforces === "string" ? params.codeforces : undefined;
   
-  const linkedinUrl = typeof params.linkedin === "string" ? extractUsername("linkedin", params.linkedin) : undefined;
-  const twitterHandle = typeof params.twitter === "string" ? extractUsername("twitter", params.twitter) : undefined;
-  const kaggleUser = typeof params.kaggle === "string" ? extractUsername("kaggle", params.kaggle) : undefined;
+  const linkedinUrl = typeof params.linkedin === "string" ? params.linkedin : undefined;
+  const twitterHandle = typeof params.twitter === "string" ? params.twitter : undefined;
+  const kaggleUser = typeof params.kaggle === "string" ? params.kaggle : undefined;
 
   const [github, leetcode, codeforces, hashnode, kaggle, linkedin, twitter] = await Promise.all([
     githubUser ? fetchGitHubProfile(githubUser) : null,
