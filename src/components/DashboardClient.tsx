@@ -77,7 +77,8 @@ export default function DashboardClient({
               {profile.github && <button onClick={() => scrollTo("github")} className="hover:text-green-400 transition-colors">OS / GitHub</button>}
               {(profile.leetcode || profile.codeforces) && <button onClick={() => scrollTo("problem-solving")} className="hover:text-green-400 transition-colors">Algorithmic</button>}
               {profile.hashnode && <button onClick={() => scrollTo("writing")} className="hover:text-green-400 transition-colors">Writing</button>}
-              {(profile.linkedin || profile.twitter || profile.kaggle) && <button onClick={() => scrollTo("influence")} className="hover:text-green-400 transition-colors">Influence</button>}
+              {profile.linkedin && <button onClick={() => scrollTo("linkedin")} className="hover:text-green-400 transition-colors">LinkedIn</button>}
+              {(profile.twitter || profile.kaggle) && <button onClick={() => scrollTo("influence")} className="hover:text-green-400 transition-colors">Influence</button>}
             </div>
           )}
         </div>
@@ -191,17 +192,31 @@ export default function DashboardClient({
               </section>
             )}
 
-            {/* SECTION: INFLUENCE (Kaggle, LinkedIn, Twitter) */}
-            {(profile.kaggle || profile.linkedin || profile.twitter) && (
+            {/* SECTION: LINKEDIN INSIGHTS */}
+            {profile.linkedin && (
+              <section id="linkedin" className="scroll-mt-24 mb-24 relative z-10">
+                <div className="hud-title" style={{ color: "#3b82f6", textShadow: "0 0 5px #3b82f6", borderColor: "rgba(59, 130, 246, 0.2)" }}>
+                  <span>LinkedIn Insights</span>
+                  <span className="text-xs opacity-50">SYS.04</span>
+                </div>
+                <div className="hud-grid">
+                  <div className="col-span-1 md:col-span-12">
+                    <LinkedInCard data={profile.linkedin} />
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* SECTION: INFLUENCE (Kaggle, Twitter) */}
+            {(profile.kaggle || profile.twitter) && (
               <section id="influence" className="scroll-mt-24 mb-24 relative z-10">
                 <div className="hud-title" style={{ color: "#a855f7", textShadow: "0 0 5px #a855f7", borderColor: "rgba(168, 85, 247, 0.2)" }}>
                   <span>Network Nodes</span>
-                  <span className="text-xs opacity-50">SYS.04</span>
+                  <span className="text-xs opacity-50">SYS.05</span>
                 </div>
                 <div className="hud-grid items-stretch">
-                  {profile.kaggle && <div className="col-span-12 lg:col-span-4"><KaggleCard data={profile.kaggle} /></div>}
-                  {profile.linkedin && <div className="col-span-12 lg:col-span-4"><LinkedInCard data={profile.linkedin} /></div>}
-                  {profile.twitter && <div className="col-span-12 lg:col-span-4"><TwitterCard data={profile.twitter} /></div>}
+                  {profile.kaggle && <div className="col-span-12 lg:col-span-6"><KaggleCard data={profile.kaggle} /></div>}
+                  {profile.twitter && <div className="col-span-12 lg:col-span-6"><TwitterCard data={profile.twitter} /></div>}
                 </div>
               </section>
             )}

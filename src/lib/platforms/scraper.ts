@@ -147,22 +147,25 @@ async function scrapeTwitter(username: string): Promise<TwitterProfile | null> {
 // ----------------------------------------------------------------------------
 async function scrapeLinkedIn(username: string): Promise<LinkedInProfile | null> {
   const url = `https://www.linkedin.com/in/${username}`;
-  
-  const getDefaultLinkedIn = () => ({
+
+  const getDefaultLinkedIn = (): LinkedInProfile => ({
     username,
     profileUrl: url,
     name: username,
     headline: "LinkedIn Member",
     location: "Global",
+    currentCompany: "",
     currentRole: "Professional",
-    followers: 0, 
+    followers: 0,
     connections: "500+",
+    experience: [],
+    topPosts: [],
   });
 
   try {
     const res = await fetch(url, FETCH_OPTS);
     if (!res.ok) return getDefaultLinkedIn();
-    
+
     const html = await res.text();
     const $ = cheerio.load(html);
 
@@ -172,27 +175,193 @@ async function scrapeLinkedIn(username: string): Promise<LinkedInProfile | null>
 
     const nameMatch = title.match(/^(.*?)\s*-/);
     const name = nameMatch ? nameMatch[1].trim() : username;
-    
+
     const parts = description.split(" | ");
     const headline = parts.length > 1 ? parts.slice(0, -1).join(" ") : description.slice(0, 100);
     const currentRole = headline.split(" at ")[0] || "Professional";
 
+    // Extract current company from headline ("Role at Company")
+    const atMatch = headline.match(/at\s+(.+?)(?:\s*[|\-·]|$)/i);
+    const currentCompany = atMatch ? atMatch[1].trim() : "";
+
+    // Extract location from description parts or structured data
+    const locationPart = parts.find(p => /[A-Z][a-z]+,?\s*[A-Z]/.test(p.trim()));
+    const location = locationPart?.trim() || extractLocationFromHtml($, html) || "Global";
+
     // Attempt to find structured data connections
     const connMatch = html.match(/(\d+[+,]?\d*)\s*connections/i);
     const connections = connMatch ? connMatch[1] : "500+";
+
+    // Attempt to extract followers count
+    const followersMatch = html.match(/(\d+[,.]?\d*)\s*followers/i);
+    const followers = followersMatch ? parseInt(followersMatch[1].replace(/[,.]/g, "")) : 0;
+
+    // Extract experience from structured data (JSON-LD or embedded data)
+    const experience = extractExperience($, html);
+
+    // Extract top posts from activity section
+    const topPosts = extractTopPosts($, html);
 
     return {
       username,
       profileUrl: url,
       name: name || username,
       headline: headline.trim() || "LinkedIn Member",
-      location: "Global",
+      location,
+      currentCompany,
       currentRole: currentRole.trim() || "Professional",
-      followers: 0, 
+      followers,
       connections,
+      experience,
+      topPosts,
     };
   } catch (err) {
     console.error("LinkedIn scrape error:", err);
     return getDefaultLinkedIn();
   }
+}
+
+/**
+ * Extract location from HTML structured data or common patterns
+ */
+function extractLocationFromHtml($: cheerio.CheerioAPI, html: string): string {
+  // Try JSON-LD structured data
+  const jsonLd = $('script[type="application/ld+json"]').text();
+  if (jsonLd) {
+    try {
+      const data = JSON.parse(jsonLd);
+      if (data.address?.addressLocality) {
+        return [data.address.addressLocality, data.address.addressCountry].filter(Boolean).join(", ");
+      }
+    } catch { /* ignore parse errors */ }
+  }
+
+  // Try common HTML patterns
+  const locMatch = html.match(/"location":\s*"([^"]+)"/);
+  if (locMatch) return locMatch[1];
+
+  return "";
+}
+
+/**
+ * Extract experience entries from LinkedIn HTML.
+ * Parses JSON-LD structured data and falls back to regex on raw HTML.
+ */
+function extractExperience($: cheerio.CheerioAPI, html: string): LinkedInProfile["experience"] {
+  const experience: LinkedInProfile["experience"] = [];
+
+  // Try JSON-LD structured data first
+  $('script[type="application/ld+json"]').each((_, el) => {
+    try {
+      const data = JSON.parse($(el).text());
+
+      // Person schema with worksFor
+      if (data["@type"] === "Person" && data.worksFor) {
+        const jobs = Array.isArray(data.worksFor) ? data.worksFor : [data.worksFor];
+        for (const job of jobs) {
+          experience.push({
+            company: job.name || job.alternateName || "Unknown",
+            role: job.jobTitle || job.member?.jobTitle || "Unknown",
+            duration: formatDuration(job.startDate, job.endDate),
+          });
+        }
+      }
+
+      // Array of Organization entries
+      if (Array.isArray(data)) {
+        for (const item of data) {
+          if (item["@type"] === "Organization" && item.employee) {
+            const employees = Array.isArray(item.employee) ? item.employee : [item.employee];
+            for (const emp of employees) {
+              experience.push({
+                company: item.name || "Unknown",
+                role: emp.jobTitle || "Unknown",
+                duration: formatDuration(emp.startDate, emp.endDate),
+              });
+            }
+          }
+        }
+      }
+    } catch { /* ignore parse errors */ }
+  });
+
+  // Fallback: regex patterns on raw HTML for embedded experience data
+  if (experience.length === 0) {
+    const expPattern = /"companyName":\s*"([^"]+)"[^}]*"title":\s*"([^"]+)"(?:[^}]*"dateRange":\s*"([^"]+)")?/g;
+    let match;
+    while ((match = expPattern.exec(html)) !== null && experience.length < 5) {
+      experience.push({
+        company: match[1],
+        role: match[2],
+        duration: match[3] || "",
+      });
+    }
+
+    // Another common embedded format
+    if (experience.length === 0) {
+      const altPattern = /"entityTitle":\s*"([^"]+)"[^}]*?"subtitle":\s*"([^"]+)"(?:[^}]*?"caption":\s*"([^"]+)")?/g;
+      while ((match = altPattern.exec(html)) !== null && experience.length < 5) {
+        experience.push({
+          company: match[2],
+          role: match[1],
+          duration: match[3] || "",
+        });
+      }
+    }
+  }
+
+  return experience.slice(0, 5);
+}
+
+/**
+ * Format a date range into a human-readable duration string.
+ */
+function formatDuration(startDate?: string, endDate?: string): string {
+  if (!startDate) return "";
+  const start = startDate.split("-")[0] || startDate;
+  const end = endDate ? (endDate.split("-")[0] || endDate) : "Present";
+  return `${start} - ${end}`;
+}
+
+/**
+ * Extract top posts from LinkedIn activity/articles embedded in HTML.
+ * Falls back to regex patterns on the raw HTML.
+ */
+function extractTopPosts($: cheerio.CheerioAPI, html: string): LinkedInProfile["topPosts"] {
+  const posts: LinkedInProfile["topPosts"] = [];
+
+  // Try to find article/post data in embedded JSON
+  const postPattern = /"commentary":\s*"([^"]{10,200})"[^}]*?"numLikes":\s*(\d+)[^}]*?"numComments":\s*(\d+)/g;
+  let match;
+  while ((match = postPattern.exec(html)) !== null && posts.length < 3) {
+    posts.push({
+      text: decodeUnicodeEscapes(match[1]).slice(0, 150),
+      reactions: parseInt(match[2]),
+      comments: parseInt(match[3]),
+    });
+  }
+
+  // Alternative pattern for post text and social counts
+  if (posts.length === 0) {
+    const altPattern = /"text":\s*"([^"]{10,200})"[^}]*?"socialCount":\s*(\d+)/g;
+    while ((match = altPattern.exec(html)) !== null && posts.length < 3) {
+      posts.push({
+        text: decodeUnicodeEscapes(match[1]).slice(0, 150),
+        reactions: parseInt(match[2]),
+        comments: 0,
+      });
+    }
+  }
+
+  // Sort by reactions descending and return top 3
+  return posts.sort((a, b) => b.reactions - a.reactions).slice(0, 3);
+}
+
+/**
+ * Decode common unicode escape sequences in scraped text.
+ */
+function decodeUnicodeEscapes(str: string): string {
+  return str.replace(/\\u[\dA-Fa-f]{4}/g, (m) =>
+    String.fromCharCode(parseInt(m.slice(2), 16))
+  );
 }
